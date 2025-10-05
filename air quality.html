@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AeroSense - Dashboard Mockup</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a2d9b7bd1f.js" crossorigin="anonymous"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Leaflet for lightweight map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    :root{
+      --bg:#eef6f4;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --accent:#0284c7;
+      --danger:#ef4444;
+      --success:#16a34a;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:#0f172a}
+    .container{max-width:1200px;margin:28px auto;padding:20px;}
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+    .brand{display:flex;align-items:center;gap:14px}
+    .brand .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,#0369a1,#06b6d4);display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    h1{font-size:20px;margin:0}
+    .sub{color:var(--muted);font-size:13px}
+
+    /* grid */
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:18px}
+    .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 6px 18px rgba(12,14,22,0.06);min-height:120px;display:flex;flex-direction:column;gap:10px}
+    .card .tile-head{display:flex;align-items:center;justify-content:space-between}
+    .tile-title{font-weight:600}
+    .tile-sub{font-size:12px;color:var(--muted)}
+
+    .icon-round{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg, rgba(2,132,199,0.12), rgba(6,182,212,0.08));display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:18px}
+
+    /* chart & map sizes */
+    #trendChart{width:100%;height:120px}
+    #map{width:100%;height:220px;border-radius:8px}
+
+    /* bottom row */
+    .wide{grid-column:1 / -1;display:flex;gap:16px}
+    .leftwide{flex:2}
+    .rightwide{flex:1;display:flex;flex-direction:column;gap:16px}
+
+    /* mobile mock */
+    .mobile-preview{width:320px;border-radius:18px;background:linear-gradient(180deg,#ffffff,#f8fafc);padding:12px;border:1px solid #e6eef0}
+    .mobile-tile{display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;background:#ffffff;margin-bottom:8px;box-shadow:0 6px 14px rgba(12,14,22,0.04)}
+    .badge{padding:6px 8px;border-radius:999px;font-size:12px;display:inline-block;background:rgba(3,105,161,0.08);color:var(--accent)}
+
+    /* responsive */
+    @media(max-width:1000px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:700px){
+      .grid{grid-template-columns:1fr}
+      .wide{flex-direction:column}
+    }
+
+    .muted{color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="logo">AS</div>
+        <div>
+          <h1>AeroSense AI</h1>
+          <div class="sub">Air quality analytics & early warnings — Northeast India</div>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="muted">Supervisor Dashboard</div>
+        <div style="margin-top:8px"><span class="badge">Live</span></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- tile 1 -->
+      <div class="card">
+        <div class="tile-head">
+          <div>
+            <div class="tile-title">Air Quality Index</div>
+            <div class="tile-sub">Latest AQI readings from sensors & forecasts</div>
+          </div>
+          <div class="icon-round"><i class="fa-solid fa-smog"></i></div>
+        </div>
+        <div class="muted">PM2.5: 95 µg/m³ • PM10: 120 µg/m³ • AQI: 150 (Unhealthy)</div>
+      </div>
+
+      <!-- tile 2 -->
+      <div class="card">
+        <div class="tile-head">
+          <div>
+            <div class="tile-title">Health Risk</div>
+            <div class="tile-sub">Predicted risk for next 7 days</div>
+          </div>
+          <div class="icon-round"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:18px;font-weight:700;color:var(--danger)">High</div>
+          <div class="muted">AQI Score: 152 / 300</div>
+        </div>
+      </div>
+
+      <!-- tile 3 -->
+      <div class="card">
+        <div class="tile-head">
+          <div>
+            <div class="tile-title">Alerts & Advisories</div>
+            <div class="tile-sub">Notifications for residents</div>
+          </div>
+          <div class="icon-round"><i class="fa-solid fa-bullhorn"></i></div>
+        </div>
+        <div class="muted">Wear masks in Zone A • Avoid outdoor exercise in Zone B</div>
+      </div>
+    </div>
+
+    <!-- wide section -->
+    <div class="grid wide" style="margin-top:6px">
+      <div class="card leftwide">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div class="tile-title">Past Trends</div><div class="tile-sub">AQI & pollution levels over months</div></div>
+          <div class="muted">Updated 1h ago</div>
+        </div>
+        <canvas id="trendChart"></canvas>
+      </div>
+
+      <div class="rightwide">
+        <div class="card">
+          <div class="tile-head">
+            <div>
+              <div class="tile-title">Pollution Hotspot Map</div>
+              <div class="tile-sub">High pollution areas</div>
+            </div>
+            <div class="icon-round"><i class="fa-solid fa-map-location-dot"></i></div>
+          </div>
+          <div id="map"></div>
+        </div>
+
+        <div class="card">
+          <div class="tile-head">
+            <div>
+              <div class="tile-title">Community Reports</div>
+              <div class="tile-sub">Citizen feedback & complaints</div>
+            </div>
+            <div class="icon-round"><i class="fa-solid fa-people-roof"></i></div>
+          </div>
+          <div class="muted">3 new reports • 1 verified</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- mobile preview -->
+    <div style="margin-top:18px;display:flex;gap:18px;align-items:flex-start">
+      <div style="flex:1;min-width:300px">
+        <div class="tile-title" style="margin-bottom:8px">Mobile Preview</div>
+        <div class="mobile-preview">
+          <div class="mobile-tile"><div style="width:44px;text-align:center"><i class="fa-solid fa-smog" style="font-size:20px;color:var(--accent)"></i></div><div><div style="font-weight:600">Air Quality</div><div class="muted" style="font-size:12px">View latest AQI</div></div></div>
+
+          <div class="mobile-tile"><div style="width:44px;text-align:center"><i class="fa-solid fa-triangle-exclamation" style="font-size:20px;color:var(--danger)"></i></div><div><div style="font-weight:600">Health Risk</div><div class="muted" style="font-size:12px">High — take precautions</div></div></div>
+
+          <div class="mobile-tile"><div style="width:44px;text-align:center"><i class="fa-solid fa-map-location-dot" style="font-size:20px;color:#f59e0b"></i></div><div><div style="font-weight:600">Hotspot Map</div><div class="muted" style="font-size:12px">City hotspots</div></div></div>
+
+          <div class="mobile-tile"><div style="width:44px;text-align:center"><i class="fa-solid fa-bullhorn" style="font-size:20px;color:var(--accent)"></i></div><div><div style="font-weight:600">Alerts</div><div class="muted" style="font-size:12px">Warnings & tips</div></div></div>
+        </div>
+      </div>
+
+      <div style="width:260px">
+        <div class="tile-title">Key Uniques</div>
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+          <div class="card"><strong>Software-only</strong><div class="muted" style="margin-top:6px">No sensors required</div></div>
+          <div class="card"><strong>AI + GIS</strong><div class="muted" style="margin-top:6px">Predictive pollution maps</div></div>
+          <div class="card"><strong>Multilingual Alerts</strong><div class="muted" style="margin-top:6px">SMS / WhatsApp / IVR</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  // Chart.js sample
+  const ctx = document.getElementById('trendChart').getContext('2d');
+  const gradient = ctx.createLinearGradient(0,0,0,200);
+  gradient.addColorStop(0, 'rgba(3,105,161,0.16)');
+  gradient.addColorStop(1, 'rgba(3,105,161,0.02)');
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+      datasets: [{
+        label: 'AQI Index',
+        data: [80,95,110,125,140,150],
+        fill: true,
+        backgroundColor: gradient,
+        borderColor: '#0369a1',
+        tension: 0.35,
+        pointRadius:3
+      },
+      {
+        label: 'PM2.5 Levels',
+        data: [45,60,70,85,90,95],
+        type: 'bar',
+        backgroundColor: 'rgba(240,138,50,0.9)',
+        yAxisID: 'y1'
+      }]
+    },
+    options: {
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{beginAtZero:true,position:'left'},
+        y1:{position:'right',grid:{display:false},beginAtZero:true}
+      }
+    }
+  });
+
+  // Leaflet map sample
+  const map = L.map('map', {zoomControl:false, attributionControl:false}).setView([26.0, 92.5], 7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);
+
+  const hotspots = [
+    {lat:26.2,lon:92.7, label:'Zone A', severity:3},
+    {lat:25.8,lon:92.4, label:'Zone B', severity:2},
+    {lat:26.6,lon:93.0, label:'Zone C', severity:1},
+  ];
+  hotspots.forEach(h=>{
+    const color = h.severity===3 ? 'red' : h.severity===2 ? 'orange' : 'green';
+    L.circle([h.lat,h.lon], {color: color, fillColor: color, fillOpacity:0.4, radius:9000}).addTo(map).bindPopup(`${h.label}`);
+  });
+</script>
+</body>
+</html>
+
